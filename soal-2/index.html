@@ -5,11 +5,11 @@
 <link rel="stylesheet" href="ext/css/bootstrap.min.css">
 <script src="ext/js/jquery-3.5.1.min.js"></script>
 <script src="ext/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
 
 </head>
-<body>
+<body >
 
-<body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-danger" style="margin-top: 10px">
   <a class="navbar-brand" href="#">DagangYuk!</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,18 +54,16 @@
   </ol>
 </nav>
 
-    ~~<i>Alert ini hanya muncul kalau tombol Add ditekan dan data berhasil ditambahkan</i>~~
-    <div class="alert alert-success alert-dismissible" role="alert">
-      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-      Kategori dagangan berhasil ditambahkan.
-    </div>
 
+<div id="message_alert"></div>
+    
+
+<div id="app">
     <div class="card col-md-10" style="margin: auto;">
-      <div class="card-body">
+      <div class="card-body" >
           <h2>Tambah Kategori Dagangan</h2>
-          ~~<i>Setelah tombol di Add, pastikan item yg ditambahkan muncul di "Kategori Dagang"</i>~~
-          <input type="text" placeholder="Masukkan Kategori Dagangan" class="col-md-5" />
-          <button class="btn btn-success">Add</button>
+          <input type="text" placeholder="Masukkan Kategori Dagangan" class="col-md-5" v-model:value="kat_dagang" />
+          <button class="btn btn-success" @click="addTask">Add</button>
       </div>
     </div>
   <form>
@@ -103,7 +101,8 @@
             <div class="form-group col-md-12">
               <label>Kategori Dagangan</label>
               <select id="inputState" class="form-control">
-                  <option></option>
+
+                  <option v-for="kategori in loop_kat_dagang ">{{kategori.task}}</option>
               </select>
             </div>
           </div>
@@ -111,16 +110,17 @@
           <div class="form-row">
             <div class="form-group col-md-12">
               <label>Saya ambil</label>
-              <input type="number" min="1" max="6" />
-              kios, jadi <b>Totalnya Rp 750000 (Ini harga satuannya & berubah setiap qty berubah)</b>
+              <input type="number" min="1" max="7" v-model:value="qty" />
+              kios, jadi <b>Totalnya Rp {{harga * qty}} </b>
             </div>
             <div class="form-group col-md-12 detail">
-              <p>~~Item-item dibawah ini hanya tampil kalau syaratnya terpenuhi~~</p>
-              <p>~~ini tampil kalau ambil 6 kios~~ Maaf kamu hanya boleh ambil 6 kios aja yah.. Lapak terbatas bro!!! Tapi, kamu tetap bisa ikut undian rumah!!!</p>
-              <p>~~ini tampil kalau ambil 5 kios~~ <b>Whoaa...!!!</b> Anda berkesempatan ikut undian rumah!!!</p>
-              <p>~~ini tampil kalau ambil 4 kios~~<b>Bungkus!</b> ambil voucher 300rb kamu dan sepasang payung cantik</p>
-              <p>~~ini tampil kalau ambil 2 & 3 kios~~ <b>Selamat!</b> Free Voucher Indomaret <i>qty</i> x 100rb, karena ambil <i>qty</i> kios</p>
-              <p>~~ini tampil kalau ambil 1 kios~~</p>
+
+              <p v-if="qty > 6 ">Maaf kamu hanya boleh ambil 6 kios aja yah.. Lapak terbatas bro!!! Tapi, kamu tetap bisa ikut undian rumah!!!</p>
+              <p v-else-if="qty == 5"><b>Whoaa...!!!</b> Anda berkesempatan ikut undian rumah!!!</p>
+              <p v-else-if="qty == 4"><b>Bungkus!</b> ambil voucher 300rb kamu dan sepasang payung cantik</p>
+              <p v-else-if="qty == 2"><b>Selamat!</b> Free Voucher Indomaret <i>{{qty}}</i> x 100rb, karena ambil <i>{{qty}}</i> kios</p>
+              <p v-else-if="qty == 3"><b>Selamat!</b> Free Voucher Indomaret <i>{{qty}}</i> x 100rb, karena ambil <i>{{qty}}</i> kios</p>
+              <p v-else>oke {{qty}} kios diambil</p>
             </div>
           </div>
         <button type="reset" class="btn btn-secondary float-right">Batal </button>
@@ -128,14 +128,24 @@
       </div>
     </div>
   </form>
+</div>
 
 <script>
     var app = new Vue({
       el: "#app",
       data: {
+        kat_dagang: "",
+        loop_kat_dagang: [],
+        qty: 0,
+        harga: 15000
       },
       methods: {
           addTask: function(){
+            this.loop_kat_dagang.push({'task':this.kat_dagang});
+            this.kat_dagang = "";
+            let pesan = '<div class="alert alert-success alert-dismissible" role="alert"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>Kategori dagangan berhasil ditambahkan.</div>';
+
+             document.getElementById("message_alert").innerHTML = pesan;
           }
       }
     })
